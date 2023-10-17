@@ -15,10 +15,10 @@ def launch_setup(context, *args, **kwargs):
     if(context.environment.get('DEPTHAI_DEBUG')=='1'):
         log_level='debug'
 
-    
+
 
     urdf_launch_dir = os.path.join(get_package_share_directory('depthai_descriptions'), 'launch')
-    
+
     params_file = LaunchConfiguration("params_file")
     camera_model = LaunchConfiguration('camera_model',  default = 'OAK-D')
 
@@ -56,7 +56,7 @@ def launch_setup(context, *args, **kwargs):
             'i_tf_imu_from_descr': imu_from_descr.perform(context),
         }
         }
-    
+
     use_gdb      = LaunchConfiguration('use_gdb',       default = 'false')
     use_valgrind = LaunchConfiguration('use_valgrind',  default = 'false')
     use_perf     = LaunchConfiguration('use_perf',      default = 'false')
@@ -143,6 +143,3 @@ def generate_launch_description():
     return LaunchDescription(
         declared_arguments + [OpaqueFunction(function=launch_setup)]
     )
-
-
-

@@ -53,7 +53,11 @@ def launch_setup(context, *args, **kwargs):
                     'cam_roll:=', cam_roll, ' ',
                     'cam_pitch:=', cam_pitch, ' ',
                     'cam_yaw:=', cam_yaw
-                ])}]
+                ])}],
+            remappings=[
+                ('/joint_states','/oak/joint_states'),
+                ('/robot_description', '/oak/robot_description')
+            ]
             ),
             LoadComposableNodes(
             target_container=name+"_container",
@@ -76,7 +80,11 @@ def launch_setup(context, *args, **kwargs):
                             'cam_roll:=', cam_roll, ' ',
                             'cam_pitch:=', cam_pitch, ' ',
                             'cam_yaw:=', cam_yaw
-                        ])}]
+                        ])}],
+                    remappings=[
+                        ('/joint_states','/oak/joint_states'),
+                        ('/robot_description', '/oak/robot_description')
+                    ]
                 )])
             ]
 
