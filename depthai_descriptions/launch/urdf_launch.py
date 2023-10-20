@@ -82,8 +82,8 @@ def launch_setup(context, *args, **kwargs):
                             'cam_yaw:=', cam_yaw
                         ])}],
                     remappings=[
-                        ('/joint_states','/oak/joint_states'),
-                        ('/robot_description', '/oak/robot_description')
+                        ('/joint_states', name + '/joint_states'),
+                        ('/robot_description', name + '/robot_description')
                     ]
                 )])
             ]
