@@ -41,6 +41,15 @@
                     <color rgba="${r} ${g} ${b} ${a}"/>
                 </material>
             </visual>
+            <collision>
+                <origin
+                    xyz="0 0 0"
+                    rpy="0 0 0" />
+                <geometry>
+                  <mesh
+                      filename="package://rif_gripper_description/meshes/oakd-s2/collision/oakd_link.STL" />
+                </geometry>
+            </collision>
         </link>
 
         <joint name="${camera_name}_model_origin_joint" type="fixed">
