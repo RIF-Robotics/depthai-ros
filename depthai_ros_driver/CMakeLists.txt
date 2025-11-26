@@ -34,26 +34,27 @@ ffmpeg_image_transport_msgs
 )
 
 set(SENSOR_DEPS
-cv_bridge 
+cv_bridge
 camera_info_manager
-depthai 
-depthai_bridge 
-rclcpp  
-std_msgs 
-sensor_msgs 
+depthai
+depthai_bridge
+rclcpp
+std_msgs
+rif_msgs
+sensor_msgs
 image_transport)
 
 set(NN_DEPS
-depthai 
-depthai_bridge 
-rclcpp 
-vision_msgs 
+depthai
+depthai_bridge
+rclcpp
+vision_msgs
 )
 
 set(CAM_DEPS
-depthai 
-rclcpp 
-rclcpp_components 
+depthai
+rclcpp
+rclcpp_components
 std_srvs
 pluginlib
 )
@@ -68,7 +69,7 @@ add_library(
   src/dai_nodes/base_node.cpp
   src/dai_nodes/sys_logger.cpp
   src/dai_nodes/sensors/img_pub.cpp
-  src/dai_nodes/sensors/sensor_helpers.cpp # TODO: Figure out different place for this 
+  src/dai_nodes/sensors/sensor_helpers.cpp # TODO: Figure out different place for this
   src/param_handlers/camera_param_handler.cpp
   src/param_handlers/imu_param_handler.cpp
   src/param_handlers/nn_param_handler.cpp

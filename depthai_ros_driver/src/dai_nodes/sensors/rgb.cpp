@@ -13,6 +13,8 @@
 #include "depthai_ros_driver/param_handlers/sensor_param_handler.hpp"
 #include "rclcpp/node.hpp"
 
+#include "rif_msgs/srv/set_int64.hpp"
+
 namespace depthai_ros_driver {
 namespace dai_nodes {
 RGB::RGB(const std::string& daiNodeName,
@@ -29,6 +31,10 @@ RGB::RGB(const std::string& daiNodeName,
     ph->declareParams(colorCamNode, sensor, publish);
     setXinXout(pipeline);
     RCLCPP_DEBUG(getLogger(), "Node %s created", daiNodeName.c_str());
+
+    setManualFocusSrv = node->create_service<rif_msgs::srv::SetInt64>(
+        "~/set_manual_focus", std::bind(&RGB::setManualFocusCB, this, std::placeholders::_1, std::placeholders::_2));
+
 }
 RGB::~RGB() = default;
 void RGB::setNames() {
@@ -152,6 +158,15 @@ std::vector<std::shared_ptr<sensor_helpers::ImagePublisher>> RGB::getPublishers(
 void RGB::updateParams(const std::vector<rclcpp::Parameter>& params) {
     auto ctrl = ph->setRuntimeParams(params);
     controlQ->send(ctrl);
+}
+
+void RGB::setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req,
+                           std::shared_ptr<rif_msgs::srv::SetInt64::Response> res) {
+  dai::CameraControl ctrl;
+  ctrl.setManualFocus(req->data);
+  //ctrl.setAutoFocusMode(dai::CameraControl::AutoFocusMode::CONTINUOUS_PICTURE);
+  controlQ->send(ctrl);
+  res->success = true;
 }
 
 }  // namespace dai_nodes

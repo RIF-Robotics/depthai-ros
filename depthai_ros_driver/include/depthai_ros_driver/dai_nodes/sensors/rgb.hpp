@@ -2,6 +2,9 @@
 
 #include "depthai_ros_driver/dai_nodes/base_node.hpp"
 
+#include "rclcpp/rclcpp.hpp"
+#include "rif_msgs/srv/set_int64.hpp"
+
 namespace dai {
 class Pipeline;
 class Device;
@@ -47,6 +50,10 @@ class RGB : public BaseNode {
     void closeQueues() override;
     std::vector<std::shared_ptr<sensor_helpers::ImagePublisher>> getPublishers() override;
 
+
+    void setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req,
+                          std::shared_ptr<rif_msgs::srv::SetInt64::Response> res);
+
    private:
     std::shared_ptr<sensor_helpers::ImagePublisher> rgbPub, previewPub;
     std::shared_ptr<dai::node::ColorCamera> colorCamNode;
@@ -54,6 +61,8 @@ class RGB : public BaseNode {
     std::shared_ptr<dai::DataInputQueue> controlQ;
     std::shared_ptr<dai::node::XLinkIn> xinControl;
     std::string ispQName, previewQName, controlQName;
+
+    rclcpp::Service<rif_msgs::srv::SetInt64>::SharedPtr setManualFocusSrv;
 };
 
 }  // namespace dai_nodes
