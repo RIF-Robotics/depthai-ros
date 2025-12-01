@@ -32,8 +32,14 @@ RGB::RGB(const std::string& daiNodeName,
     setXinXout(pipeline);
     RCLCPP_DEBUG(getLogger(), "Node %s created", daiNodeName.c_str());
 
+    // In your Node class constructor or a suitable scope
+    setManualFocusCBGroup_ = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+
     setManualFocusSrv = node->create_service<rif_msgs::srv::SetInt64>(
-        "~/set_manual_focus", std::bind(&RGB::setManualFocusCB, this, std::placeholders::_1, std::placeholders::_2));
+        "~/set_manual_focus",
+        std::bind(&RGB::setManualFocusCB, this, std::placeholders::_1, std::placeholders::_2),
+        rmw_qos_profile_services_default,
+        setManualFocusCBGroup_);
 
 }
 RGB::~RGB() = default;

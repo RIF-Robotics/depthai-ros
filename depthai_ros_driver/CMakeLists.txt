@@ -134,6 +134,13 @@ add_executable(
 	src/camera_node.cpp)
 ament_target_dependencies(camera_node ${CAM_DEPS} ${COMMON_DEPS} ${SENSOR_DEPS} ${NN_DEPS})
 target_link_libraries(camera_node ${PROJECT_NAME} ${SENSOR_LIB_NAME} ${NN_LIB_NAME} ${COMMON_LIB_NAME})
+
+add_executable(
+	camera_node_multi_threaded
+	src/camera_node_multi_threaded.cpp)
+ament_target_dependencies(camera_node_multi_threaded ${CAM_DEPS} ${COMMON_DEPS} ${SENSOR_DEPS} ${NN_DEPS})
+target_link_libraries(camera_node_multi_threaded ${PROJECT_NAME} ${SENSOR_LIB_NAME} ${NN_LIB_NAME} ${COMMON_LIB_NAME})
+
 rclcpp_components_register_nodes(${PROJECT_NAME} "${PROJECT_NAME}::Camera")
 pluginlib_export_plugin_description_file(${PROJECT_NAME} plugins.xml)
 ament_export_include_directories(include)
@@ -157,6 +164,7 @@ EXPORT ${PROJECT_NAME}Targets
 install(EXPORT ${PROJECT_NAME}Targets
       DESTINATION share/${PROJECT_NAME}/cmake)
 install(TARGETS camera_node DESTINATION lib/${PROJECT_NAME})
+install(TARGETS camera_node_multi_threaded DESTINATION lib/${PROJECT_NAME})
 ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
 install(

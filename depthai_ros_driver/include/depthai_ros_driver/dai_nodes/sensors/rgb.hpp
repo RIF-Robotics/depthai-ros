@@ -51,6 +51,7 @@ class RGB : public BaseNode {
     std::vector<std::shared_ptr<sensor_helpers::ImagePublisher>> getPublishers() override;
 
 
+    rclcpp::CallbackGroup::SharedPtr setManualFocusCBGroup_;
     void setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req,
                           std::shared_ptr<rif_msgs::srv::SetInt64::Response> res);
 
