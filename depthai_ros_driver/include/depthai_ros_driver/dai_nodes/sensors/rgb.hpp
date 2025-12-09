@@ -4,6 +4,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rif_msgs/srv/set_int64.hpp"
+#include "rif_msgs/srv/set_depth_ai_focus_mode.hpp"
 
 namespace dai {
 class Pipeline;
@@ -54,6 +55,8 @@ class RGB : public BaseNode {
     rclcpp::CallbackGroup::SharedPtr setManualFocusCBGroup_;
     void setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req,
                           std::shared_ptr<rif_msgs::srv::SetInt64::Response> res);
+    void setFocusModeCB(const std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Request> req,
+                        std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Response> res);
 
    private:
     std::shared_ptr<sensor_helpers::ImagePublisher> rgbPub, previewPub;
@@ -64,6 +67,7 @@ class RGB : public BaseNode {
     std::string ispQName, previewQName, controlQName;
 
     rclcpp::Service<rif_msgs::srv::SetInt64>::SharedPtr setManualFocusSrv;
+    rclcpp::Service<rif_msgs::srv::SetDepthAIFocusMode>::SharedPtr setFocusModeSrv;
 };
 
 }  // namespace dai_nodes

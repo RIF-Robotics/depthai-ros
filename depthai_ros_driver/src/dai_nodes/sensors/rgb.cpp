@@ -7,6 +7,7 @@
 #include "depthai/pipeline/node/VideoEncoder.hpp"
 #include "depthai/pipeline/node/XLinkIn.hpp"
 #include "depthai/pipeline/node/XLinkOut.hpp"
+#include "depthai/pipeline/datatype/CameraControl.hpp"
 #include "depthai_bridge/ImageConverter.hpp"
 #include "depthai_ros_driver/dai_nodes/sensors/img_pub.hpp"
 #include "depthai_ros_driver/dai_nodes/sensors/sensor_helpers.hpp"
@@ -38,6 +39,12 @@ RGB::RGB(const std::string& daiNodeName,
     setManualFocusSrv = node->create_service<rif_msgs::srv::SetInt64>(
         "~/set_manual_focus",
         std::bind(&RGB::setManualFocusCB, this, std::placeholders::_1, std::placeholders::_2),
+        rmw_qos_profile_services_default,
+        setManualFocusCBGroup_);
+
+    setFocusModeSrv = node->create_service<rif_msgs::srv::SetDepthAIFocusMode>(
+        "~/set_focus_mode",
+        std::bind(&RGB::setFocusModeCB, this, std::placeholders::_1, std::placeholders::_2),
         rmw_qos_profile_services_default,
         setManualFocusCBGroup_);
 
@@ -170,7 +177,20 @@ void RGB::setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Reques
                            std::shared_ptr<rif_msgs::srv::SetInt64::Response> res) {
   dai::CameraControl ctrl;
   ctrl.setManualFocus(req->data);
-  //ctrl.setAutoFocusMode(dai::CameraControl::AutoFocusMode::CONTINUOUS_PICTURE);
+  //ctrl.setManualFocusRaw(req->data); // 0.0 - 1.0
+  controlQ->send(ctrl);
+  res->success = true;
+}
+
+void RGB::setFocusModeCB(const std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Request> req,
+                         std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Response> res)
+{
+  dai::CameraControl ctrl;
+  ctrl.setAutoFocusMode(static_cast<dai::CameraControl::AutoFocusMode>(req->focus_mode));
+
+  if (req->trigger_auto_focus) {
+    ctrl.setAutoFocusTrigger();
+  }
   controlQ->send(ctrl);
   res->success = true;
 }
