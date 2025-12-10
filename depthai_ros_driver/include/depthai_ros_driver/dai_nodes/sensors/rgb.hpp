@@ -1,10 +1,12 @@
 #pragma once
 
 #include "depthai_ros_driver/dai_nodes/base_node.hpp"
+#include "depthai/pipeline/datatype/CameraControl.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 #include "rif_msgs/srv/set_int64.hpp"
 #include "rif_msgs/srv/set_depth_ai_focus_mode.hpp"
+#include "rif_msgs/srv/get_depth_ai_focus_mode.hpp"
 
 namespace dai {
 class Pipeline;
@@ -57,6 +59,8 @@ class RGB : public BaseNode {
                           std::shared_ptr<rif_msgs::srv::SetInt64::Response> res);
     void setFocusModeCB(const std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Request> req,
                         std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Response> res);
+    void getFocusModeCB(const std::shared_ptr<rif_msgs::srv::GetDepthAIFocusMode::Request> /* req */,
+                        std::shared_ptr<rif_msgs::srv::GetDepthAIFocusMode::Response> res);
 
    private:
     std::shared_ptr<sensor_helpers::ImagePublisher> rgbPub, previewPub;
@@ -66,8 +70,11 @@ class RGB : public BaseNode {
     std::shared_ptr<dai::node::XLinkIn> xinControl;
     std::string ispQName, previewQName, controlQName;
 
+    dai::CameraControl::AutoFocusMode focus_mode;
+
     rclcpp::Service<rif_msgs::srv::SetInt64>::SharedPtr setManualFocusSrv;
     rclcpp::Service<rif_msgs::srv::SetDepthAIFocusMode>::SharedPtr setFocusModeSrv;
+    rclcpp::Service<rif_msgs::srv::GetDepthAIFocusMode>::SharedPtr getFocusModeSrv;
 };
 
 }  // namespace dai_nodes
