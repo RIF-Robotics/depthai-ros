@@ -217,10 +217,25 @@ void ImagePublisher::publish(std::shared_ptr<Image> img, rclcpp::Time timestamp)
 }
 
 void ImagePublisher::publish(const std::shared_ptr<dai::ADatatype>& data) {
+    if (trigger_mode_) {
+      if (not trigger_.load()) {
+        return;
+      }
+      trigger_.store(false);
+    }
+
     if(rclcpp::ok()) {
         auto img = convertData(data);
         publish(img);
     }
+}
+
+void ImagePublisher::enable_trigger_mode(bool enable) {
+    trigger_mode_ = enable;
+}
+
+void ImagePublisher::trigger() {
+    trigger_.store(true);
 }
 }  // namespace sensor_helpers
 }  // namespace dai_nodes

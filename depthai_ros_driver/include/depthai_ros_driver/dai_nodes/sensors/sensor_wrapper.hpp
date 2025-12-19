@@ -44,6 +44,7 @@ class SensorWrapper : public BaseNode {
                            bool publish = true);
     ~SensorWrapper();
     void updateParams(const std::vector<rclcpp::Parameter>& params) override;
+    void trigger() override;
     void setupQueues(std::shared_ptr<dai::Device> device) override;
     void link(dai::Node::Input in, int linkType = 0) override;
     void setNames() override;

@@ -102,5 +102,8 @@ std::vector<std::shared_ptr<sensor_helpers::ImagePublisher>> BaseNode::getPublis
 void BaseNode::updateParams(const std::vector<rclcpp::Parameter>& /*params*/) {
     return;
 };
+void BaseNode::trigger() {
+    return;
+}
 }  // namespace dai_nodes
 }  // namespace depthai_ros_driver

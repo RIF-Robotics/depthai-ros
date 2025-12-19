@@ -82,6 +82,7 @@ void RGB::setXinXout(std::shared_ptr<dai::Pipeline> pipeline) {
         encConfig.enabled = lowBandwidth;
 
         rgbPub = setupOutput(pipeline, ispQName, rgbLinkChoice, ph->getParam<bool>("i_synced"), encConfig);
+        rgbPub->enable_trigger_mode(ph->getParam<bool>("i_trigger_mode"));
     }
     if(ph->getParam<bool>("i_enable_preview")) {
         previewPub = setupOutput(pipeline, previewQName, [&](auto input) { colorCamNode->preview.link(input); });
@@ -179,6 +180,10 @@ std::vector<std::shared_ptr<sensor_helpers::ImagePublisher>> RGB::getPublishers(
 void RGB::updateParams(const std::vector<rclcpp::Parameter>& params) {
     auto ctrl = ph->setRuntimeParams(params);
     controlQ->send(ctrl);
+}
+
+void RGB::trigger() {
+    rgbPub->trigger();
 }
 
 void RGB::setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req,

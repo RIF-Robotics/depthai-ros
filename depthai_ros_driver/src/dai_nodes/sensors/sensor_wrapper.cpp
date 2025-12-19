@@ -152,5 +152,9 @@ void SensorWrapper::updateParams(const std::vector<rclcpp::Parameter>& params) {
     sensorNode->updateParams(params);
 }
 
+void SensorWrapper::trigger() {
+    sensorNode->trigger();
+}
+
 }  // namespace dai_nodes
 }  // namespace depthai_ros_driver

@@ -58,6 +58,8 @@ void Camera::onConfigure() {
     srvGroup = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
     startSrv = this->create_service<Trigger>(
         "~/start_camera", std::bind(&Camera::startCB, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, srvGroup);
+    triggerSrv = this->create_service<Trigger>(
+        "~/trigger", std::bind(&Camera::triggerCB, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, srvGroup);
     stopSrv = this->create_service<Trigger>(
         "~/stop_camera", std::bind(&Camera::stopCB, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default, srvGroup);
     savePipelineSrv = this->create_service<Trigger>(
@@ -148,6 +150,13 @@ void Camera::savePipeline() {
 
 void Camera::savePipelineCB(const Trigger::Request::SharedPtr /*req*/, Trigger::Response::SharedPtr res) {
     savePipeline();
+    res->success = true;
+}
+
+void Camera::triggerCB(const Trigger::Request::SharedPtr /*req*/, Trigger::Response::SharedPtr res) {
+    for(const auto& node : daiNodes) {
+        node->trigger();
+    }
     res->success = true;
 }
 

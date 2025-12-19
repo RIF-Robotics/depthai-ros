@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <atomic>
 
 #include "depthai/pipeline/Node.hpp"
 #include "depthai/pipeline/datatype/ADatatype.hpp"
@@ -87,6 +88,8 @@ class ImagePublisher {
     void publish(std::shared_ptr<Image> img, rclcpp::Time timestamp);
     std::shared_ptr<Image> convertData(const std::shared_ptr<dai::ADatatype>& data);
     std::shared_ptr<dai::node::VideoEncoder> createEncoder(std::shared_ptr<dai::Pipeline> pipeline, const utils::VideoEncoderConfig& encoderConfig);
+    void trigger();
+    void enable_trigger_mode(bool enable);
 
    private:
     std::shared_ptr<rclcpp::Node> node;
@@ -107,6 +110,8 @@ class ImagePublisher {
     std::string qName;
     bool ipcEnabled;
     bool synced;
+    std::atomic_bool trigger_ = false;
+    bool trigger_mode_ = false;
 };
 }  // namespace sensor_helpers
 }  // namespace dai_nodes
