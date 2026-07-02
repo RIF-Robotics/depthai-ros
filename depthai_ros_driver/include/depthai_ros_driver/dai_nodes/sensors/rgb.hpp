@@ -54,10 +54,8 @@ class RGB : public BaseNode {
     void closeQueues() override;
     std::vector<std::shared_ptr<sensor_helpers::ImagePublisher>> getPublishers() override;
 
-
     rclcpp::CallbackGroup::SharedPtr setManualFocusCBGroup_;
-    void setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req,
-                          std::shared_ptr<rif_msgs::srv::SetInt64::Response> res);
+    void setManualFocusCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req, std::shared_ptr<rif_msgs::srv::SetInt64::Response> res);
     void setFocusModeCB(const std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Request> req,
                         std::shared_ptr<rif_msgs::srv::SetDepthAIFocusMode::Response> res);
     void getFocusModeCB(const std::shared_ptr<rif_msgs::srv::GetDepthAIFocusMode::Request> /* req */,

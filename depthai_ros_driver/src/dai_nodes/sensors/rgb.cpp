@@ -35,27 +35,25 @@ RGB::RGB(const std::string& daiNodeName,
     // In your Node class constructor or a suitable scope
     setManualFocusCBGroup_ = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
-    setManualFocusSrv = node->create_service<rif_msgs::srv::SetInt64>(
-        "~/set_manual_focus",
-        std::bind(&RGB::setManualFocusCB, this, std::placeholders::_1, std::placeholders::_2),
-        rmw_qos_profile_services_default,
-        setManualFocusCBGroup_);
+    setManualFocusSrv = node->create_service<rif_msgs::srv::SetInt64>("~/set_manual_focus",
+                                                                      std::bind(&RGB::setManualFocusCB, this, std::placeholders::_1, std::placeholders::_2),
+                                                                      rmw_qos_profile_services_default,
+                                                                      setManualFocusCBGroup_);
 
-    setFocusModeSrv = node->create_service<rif_msgs::srv::SetDepthAIFocusMode>(
-        "~/set_focus_mode",
-        std::bind(&RGB::setFocusModeCB, this, std::placeholders::_1, std::placeholders::_2),
-        rmw_qos_profile_services_default,
-        setManualFocusCBGroup_);
+    setFocusModeSrv =
+        node->create_service<rif_msgs::srv::SetDepthAIFocusMode>("~/set_focus_mode",
+                                                                 std::bind(&RGB::setFocusModeCB, this, std::placeholders::_1, std::placeholders::_2),
+                                                                 rmw_qos_profile_services_default,
+                                                                 setManualFocusCBGroup_);
 
-    getFocusModeSrv = node->create_service<rif_msgs::srv::GetDepthAIFocusMode>(
-        "~/get_focus_mode",
-        std::bind(&RGB::getFocusModeCB, this, std::placeholders::_1, std::placeholders::_2),
-        rmw_qos_profile_services_default,
-        setManualFocusCBGroup_);
+    getFocusModeSrv =
+        node->create_service<rif_msgs::srv::GetDepthAIFocusMode>("~/get_focus_mode",
+                                                                 std::bind(&RGB::getFocusModeCB, this, std::placeholders::_1, std::placeholders::_2),
+                                                                 rmw_qos_profile_services_default,
+                                                                 setManualFocusCBGroup_);
 
     bool man_focus_mode = ph->getParam<bool>("r_set_man_focus");
     focus_mode = man_focus_mode ? dai::CameraControl::AutoFocusMode::OFF : dai::CameraControl::AutoFocusMode::CONTINUOUS_VIDEO;
-
 }
 RGB::~RGB() = default;
 void RGB::setNames() {
