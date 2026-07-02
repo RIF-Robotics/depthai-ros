@@ -41,6 +41,7 @@ depthai_bridge
 rclcpp
 std_msgs
 rif_msgs
+std_srvs
 sensor_msgs
 image_transport)
 

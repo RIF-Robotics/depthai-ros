@@ -14,6 +14,7 @@
 #include "rclcpp/node.hpp"
 
 #include "rif_msgs/srv/set_int64.hpp"
+#include "std_srvs/srv/set_bool.hpp"
 
 namespace depthai_ros_driver
 {
@@ -34,6 +35,8 @@ RGB::RGB(const std::string& daiNodeName, std::shared_ptr<rclcpp::Node> node, std
   RCLCPP_DEBUG(getLogger(), "Node %s created", daiNodeName.c_str());
 
   // In your Node class constructor or a suitable scope
+
+  // focus
   setManualFocusCBGroup_ = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 
   setManualFocusSrv = node->create_service<rif_msgs::srv::SetInt64>(
@@ -51,6 +54,22 @@ RGB::RGB(const std::string& daiNodeName, std::shared_ptr<rclcpp::Node> node, std
   bool man_focus_mode = ph->getParam<bool>("r_set_man_focus");
   focus_mode =
       man_focus_mode ? dai::CameraControl::AutoFocusMode::OFF : dai::CameraControl::AutoFocusMode::CONTINUOUS_VIDEO;
+
+  // exposure
+  setManualExposureCBGroup_ = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+
+  setManualExposureModeSrv = node->create_service<std_srvs::srv::SetBool>(
+      "~/set_manual_exposure_mode",
+      std::bind(&RGB::setManualExposureModeCB, this, std::placeholders::_1, std::placeholders::_2),
+      rmw_qos_profile_services_default, setManualExposureCBGroup_);
+
+  setManualExposureSrv = node->create_service<rif_msgs::srv::SetInt64>(
+      "~/set_manual_exposure", std::bind(&RGB::setManualExposureCB, this, std::placeholders::_1, std::placeholders::_2),
+      rmw_qos_profile_services_default, setManualExposureCBGroup_);
+
+  getExposureValueSrv = node->create_service<rif_msgs::srv::GetInt64>(
+      "~/get_exposure_value", std::bind(&RGB::getExposureValueCB, this, std::placeholders::_1, std::placeholders::_2),
+      rmw_qos_profile_services_default, setManualExposureCBGroup_);
 }
 RGB::~RGB() = default;
 void RGB::setNames()
@@ -240,6 +259,42 @@ void RGB::getFocusModeCB(const std::shared_ptr<rif_msgs::srv::GetDepthAIFocusMod
                          std::shared_ptr<rif_msgs::srv::GetDepthAIFocusMode::Response> res)
 {
   res->focus_mode = static_cast<uint>(focus_mode);
+  res->success = true;
+}
+
+void RGB::setManualExposureModeCB(const std::shared_ptr<std_srvs::srv::SetBool::Request> req,
+                                  std::shared_ptr<std_srvs::srv::SetBool::Response> res)
+{
+  dai::CameraControl ctrl;
+  if (req->data)
+  {
+    int exposure = ph->getParam<int>("r_exposure");
+    int iso = ph->getParam<int>("r_iso");
+    ctrl.setManualExposure(exposure, iso);
+  }
+  else
+  {
+    ctrl.setAutoExposureEnable();
+  }
+  controlQ->send(ctrl);
+  res->success = true;
+  res->message = req->data ? "Manual exposure enabled" : "Auto exposure enabled";
+}
+
+void RGB::setManualExposureCB(const std::shared_ptr<rif_msgs::srv::SetInt64::Request> req,
+                              std::shared_ptr<rif_msgs::srv::SetInt64::Response> res)
+{
+  dai::CameraControl ctrl;
+  int iso = ph->getParam<int>("r_iso");
+  ctrl.setManualExposure(req->data, iso);
+  controlQ->send(ctrl);
+  res->success = true;
+}
+
+void RGB::getExposureValueCB(const std::shared_ptr<rif_msgs::srv::GetInt64::Request> /* req */,
+                             std::shared_ptr<rif_msgs::srv::GetInt64::Response> res)
+{
+  res->data = ph->getParam<int>("r_exposure");
   res->success = true;
 }
 
